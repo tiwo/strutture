@@ -45,6 +45,7 @@ const props = defineProps({
   jitter: {
     type: Function as PropType<(si: number, j: number, x: number, y: number) => [number, number]>,
     //default: (_i: number, _j: number, _x: number, _y: number) => [0, 0],
+    /*
     default: (i: number, j: number, _x: number, _y: number) => { //dirty
       let ii = +91 + Math.floor(i);
       let jj = -31 + Math.floor(j);
@@ -56,7 +57,16 @@ const props = defineProps({
       jj = (jj % (1 + 2 * amplitude)) - amplitude;
       return [ii, jj];
       //return [0, 0];
-    },
+    }
+    */
+    default: (i: number, j: number, _x: number, _y: number) => { //dirty
+      const amplitude = 50
+      const ii = (Math.sin(i * 0.4) + Math.cos(j * 0.3))* amplitude;
+      const jj = (Math.cos(j * 0.3) + Math.cos(i * 0.7)) * amplitude;
+      return [ii, jj];
+    }
+    //default: (i: number, j: number, _x: number, _y: number) => [0, 0]
+    ,
   }
 
 });
