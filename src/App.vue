@@ -4,8 +4,8 @@ import Triangular from './2506-001-simplegrids/Triangular.vue';
 
 <template>
   <Triangular
-    :width="1200"
-    :height="800" />
+    :width="1800"
+    :height="1200" />
 </template>
 
 <style scoped>

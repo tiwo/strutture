@@ -17,14 +17,46 @@ const props = defineProps({
     required: true
   },
 
+  fillcolor : {
+    type: String,
+    required: false,
+    validator: (value: string) => {
+      // Simple color validation
+      return /^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(value) || /^hsl\(\d{1,3},\s*\d{1,3}%,\s*\d{1,3}%\)$/.test(value);
+    },
+    default: '#639',
+  },
+
+  strokeColor: {
+    type: String,
+    required: false,
+    validator: (value: string) => {
+      // Simple color validation
+      return /^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(value) || /^hsl\(\d{1,3},\s*\d{1,3}%,\s*\d{1,3}%\)$/.test(value);
+    },
+    default: '#d0f',
+  },
+
   transform: {
     type: TransformationMatrix2D,
-    default: () => (new TransformationMatrix2D(50 * Math.sqrt(3), -50, 0, 100, 0, 0)).rotate(Math.PI / 12),
+    default: () => (new TransformationMatrix2D(60 * Math.sqrt(3), -60, 0, 120, 0, 0)).rotate(Math.PI / 12), //dirty
   },
 
   jitter: {
-    type: Function as PropType<(i: number, j: number, x: number, y: number) => [number, number]>,
-    default: (_i: number, _j: number, _x: number, _y: number) => [0, 0],
+    type: Function as PropType<(si: number, j: number, x: number, y: number) => [number, number]>,
+    //default: (_i: number, _j: number, _x: number, _y: number) => [0, 0],
+    default: (i: number, j: number, _x: number, _y: number) => { //dirty
+      let ii = +91 + Math.floor(i);
+      let jj = -31 + Math.floor(j);
+      [ii, jj] = [ii+(jj % 117), jj+(ii % 79)];
+      ii ^= jj >> 2
+      jj ^= ii >> 3;
+      const amplitude = 15
+      ii = (ii % (1 + 2 * amplitude)) - amplitude;
+      jj = (jj % (1 + 2 * amplitude)) - amplitude;
+      return [ii, jj];
+      //return [0, 0];
+    },
   }
 
 });
@@ -87,11 +119,16 @@ function draw() {
       ctx.lineTo(x2, y2);
       ctx.lineTo(x3, y3);
       ctx.closePath();
-      ctx.fillStyle = `hsl(${(i + j) * 20 % 360}, 100%, 50%)`;
-      ctx.fillStyle = '#850';
-      ctx.fill();
-      ctx.strokeStyle = 'black';
-      ctx.stroke();
+
+      if (props.fillcolor) {
+        ctx.fillStyle = props.fillcolor;
+        ctx.fill();
+      }
+      
+      if (props.strokeColor) {  
+        ctx.strokeStyle = props.strokeColor;
+        ctx.stroke();
+      }
 
     }
   }
